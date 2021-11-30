@@ -1,24 +1,47 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import { Setup } from './Component/Setup';
+import { checkHealth } from './Component/Health';
+import UserContext from './Component/User/User';
+
 
 function App() {
+  const [user, setUser] = useState({
+    playerName: 'player',
+    playerPetName: 'baby',
+    rivalName: 'rival',
+    rivalPetName: 'bitey'
+  });
+  const userContextValue = {user, setUser};
+
+  console.log("user",user);
+
+  const [healthInput, setHealthInput] = useState(0);
+  const [storedHealth, setHealth] = useState(0);
+  const [healthDescriptionStringFinal, sethealthDescriptionStringFinal] = useState("");
+  const [petName, setPetName] = useState("pet");
+  
+  useEffect(() => {
+    sethealthDescriptionStringFinal(checkHealth(storedHealth,petName));
+  },[storedHealth, petName]);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider value={userContextValue}>
+      <div>
+        <div>
+          <Setup 
+          // playerName="player" playerPetName="baby" rivalName="rival" rivalPetName="bitey"
+          />
+          <div>{user.playerName}
+          </div>
+        </div>
+        <input onChange={event => setPetName(event.target.value)}/>
+        <input onChange={event => setHealthInput(event.target.value)}/>
+        <button onClick={() => setHealth(healthInput)}>Click me</button>
+        <div>{storedHealth}</div>
+        <div>{healthDescriptionStringFinal}</div>
+      </div>
+    </UserContext.Provider>
   );
 }
 
